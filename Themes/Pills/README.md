@@ -261,7 +261,12 @@ settings:
 
 * Open the Windows 11 Taskbar Styler mod in Windhawk.
 * Go to the "Settings" tab.
-* Select the theme and save the settings.
+* Select the theme.
+<details>
+<summary>Add a styleConstant "modsOn=1" and save the settings.</summary>
+
+![modsOn](modsOn.jpeg)
+</details>
 
 ## Manual installation
 
@@ -269,13 +274,15 @@ The theme styles can also be imported manually. To do that, follow these steps:
 
 * Open the Windows 11 Taskbar Styler mod in Windhawk.
 * Go to the "Settings" tab and select "Textual mode".
-* Copy the content below to the text box and click "Save settings".
+* Copy the content below to the text box.
+* Flip the first styleConstant "modsOn" from 0 to 1 and click "Save settings".
 
 <details>
 <summary>Content to import (click to expand)</summary>
 
 ```yaml
 styleConstants:
+  - modsOn = 0
   - taskbarLeftOffset = 12
   - taskbarRightOffset = 12
   - taskbarTopOffset = 4
@@ -293,8 +300,8 @@ styleConstants:
   - badgeNudge = 4,4,0,0
   - sysTrayIconSize = 16
   - taskbarSidesRounded = 1
-  - fillColor = <WindhawkBlur BlurAmount="7" TintColor="{ThemeResource AdaptiveFill}" TintOpacity="{{0.2*(LabelsMod-1)}}" TintLuminosityOpacity="{{0.2*(LabelsMod-1)}}"/>
-  - borderColor = <SolidColorBrush Color="{ThemeResource AdaptiveBorder}" Opacity="{{1*(LabelsMod-1)}}"/>
+  - fillColor = <WindhawkBlur BlurAmount="7" TintColor="{ThemeResource AdaptiveFill}" TintOpacity="{{0.2*($modsOn)}}" TintLuminosityOpacity="{{0.2*($modsOn)}}"/>
+  - borderColor = <SolidColorBrush Color="{ThemeResource AdaptiveBorder}" Opacity="{{1*($modsOn)}}"/>
   - progressColor = <SolidColorBrush Color="{ThemeResource SystemAccentColor}" Opacity="0.2"/>
   - showDesktopIndicatorColor = <SolidColorBrush Color="{ThemeResource SystemAccentColor}" Opacity="0.7"/>
   - multiWinIndicatorColor = <SolidColorBrush Color="{ThemeResource AdaptiveIndicator}" Opacity="0.7"/>
@@ -327,9 +334,14 @@ controlStyles:
       - Canvas.ZIndex = 2
       - Canvas.ZIndex@NoRunningIndicator = -10
       - // The native highlighter. Border thickness set to zero for consistent behavior (in light mode the border is transparent).
+  - target: Taskbar.TaskListLabeledButtonPanel#IconPanel@CommonStates > Border#BackgroundElement
+    styles:
+      - Opacity = 1
+      - Opacity@InactiveNormal := {{$modsOn}}
+      - // The native highlighter.
   - target: Taskbar.TaskListLabeledButtonPanel#IconPanel@RunningIndicatorStates > Rectangle#RunningIndicator
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity = 1
       - Opacity@NoRunningIndicator = 0
       - Height := {{TaskbarHeight-($taskbarBottomOffset+$taskbarTopOffset)}}
       - Margin := 0,{{$taskbarTopOffset-4}},0,{{$taskbarBottomOffset-4}}
@@ -342,7 +354,7 @@ controlStyles:
       - // The running indicator functions as the background of taskbar buttons. Left and right margins must be zero to work along with the Labels mod.
   - target: Microsoft.UI.Xaml.Controls.ProgressBar#ProgressIndicator
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity := {{$modsOn}}
       - Height := {{TaskbarHeight-($taskbarBottomOffset+$taskbarTopOffset)}}
       - Margin = 0,{{$taskbarTopOffset-4}},0,{{$taskbarBottomOffset-4}}
       - // Same rule for progress indicator applies. Left and Right Margins must be zero to work along with the Labels mod.
@@ -385,7 +397,7 @@ controlStyles:
       - // Indeterminate progress bar 2 indicator.
   - target: Border#MultiWindowElement
     styles:
-      - Visibility := {{LabelsMod-1}}
+      - Visibility := {{$modsOn}}
       - Height := {{TaskbarHeight-($taskbarBottomOffset+$taskbarTopOffset)-2*$highlightOffset}}
       - // Multi window element shows when Labels mod is disabled (stock taskbar mode).
   - target: Taskbar.TaskListLabeledButtonPanel > TextBlock#LabelControl
@@ -403,7 +415,7 @@ controlStyles:
       - // Taskbar buttons.
   - target: Taskbar.TaskListButton#TaskListButton > Taskbar.TaskListLabeledButtonPanel#IconPanel@CommonStates > Image#Icon
     styles:
-      - Margin := {{8*(LabelsMod-1)}},{{$taskbarTopOffset}},{{2*(1-(LabelsMod-1))}},{{$taskbarBottomOffset}}
+      - Margin := {{8*($modsOn)}},{{$taskbarTopOffset}},{{2*(1-($modsOn))}},{{$taskbarBottomOffset}}
       - HorizontalAlignment = 1
       - Canvas.ZIndex = 3
       - RenderTransformOrigin = 0.5,0.5
@@ -411,7 +423,7 @@ controlStyles:
       - // Taskbar buttons icons.
   - target: Taskbar.TaskListLabeledButtonPanel@CommonStates > Rectangle#DefaultIcon
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity := {{$modsOn}}
       - Stretch = 2
       - Height = 3
       - Width = 3
@@ -441,7 +453,7 @@ controlStyles:
       - // Windows Start button hidden using small width and zero height (a method to prevent language flyout displacement bug).
   - target: Taskbar.TaskListLabeledButtonPanel#IconPanel > Image#OverlayIcon
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity := {{$modsOn}}
       - Width := $badgeSize
       - Height := $badgeSize
       - Margin := $badgeNudge
@@ -449,7 +461,7 @@ controlStyles:
       - // Badge indicator for specific apps.
   - target: Taskbar.TaskListLabeledButtonPanel#IconPanel > Taskbar.Badge#BadgeControl
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity := {{$modsOn}}
       - MinWidth := $badgeSize
       - Width := $badgeSize
       - Height := $badgeSize
@@ -575,12 +587,12 @@ controlStyles:
   - target: Taskbar.AugmentedEntryPointButton#AugmentedEntryPointButton > Taskbar.TaskListButtonPanel#ExperienceToggleButtonRootPanel > Grid#AugmentedEntryPointContentGrid > Grid > Grid > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > Border > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > Grid > Border#LargeTicker2 > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > TextBlock[1]
     styles:
       - ActualWidth => WeatherTempWidth
-      - RenderTransform := <TranslateTransform X="0" Y="{{8*(LabelsMod-1)}}" />
+      - RenderTransform := <TranslateTransform X="0" Y="{{8*($modsOn)}}" />
       - // Weather widget's temperature text block.
   - target: Taskbar.AugmentedEntryPointButton#AugmentedEntryPointButton > Taskbar.TaskListButtonPanel#ExperienceToggleButtonRootPanel > Grid#AugmentedEntryPointContentGrid > Grid > Grid > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > Border > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > Grid > Border#LargeTicker2 > AdaptiveCards.Rendering.Uwp.WholeItemsPanel > TextBlock[2]
     styles:
       - ActualWidth => WeatherCondWidth
-      - RenderTransform := <TranslateTransform X="{{(WeatherTempWidth+8)*(LabelsMod-1)}}" Y="{{-8*(LabelsMod-1)}}" />
+      - RenderTransform := <TranslateTransform X="{{(WeatherTempWidth+8)*($modsOn)}}" Y="{{-8*($modsOn)}}" />
       - // Weather widget's weather condition text block.
   - target: Taskbar.TaskListButtonPanel#ExperienceToggleButtonRootPanel > Grid#AugmentedEntryPointContentGrid
     styles:
@@ -589,7 +601,7 @@ controlStyles:
       - // Weather widget content grid.
   - target: Grid#AugmentedEntryPointContentGrid
     styles:
-      - Margin = {{6*(LabelsMod-1)}},0,0,2
+      - Margin = {{6*($modsOn)}},0,0,2
       - // Weather widget content grid.
   - target: Taskbar.AugmentedEntryPointButton#AugmentedEntryPointButton > Taskbar.TaskListButtonPanel#ExperienceToggleButtonRootPanel > Grid#AugmentedEntryPointContentGrid > Grid > Grid > AdaptiveCards.Rendering.Uwp.WholeItemsPanel
     styles:
@@ -634,7 +646,7 @@ controlStyles:
       - // Language flyout.
   - target: Grid#ContainerGrid@ > Rectangle#ShowDesktopPipe
     styles:
-      - Opacity := {{LabelsMod-1}}
+      - Opacity := {{$modsOn}}
       - Width = 4
       - Height = 4
       - Height@PointerOver = 10
@@ -690,6 +702,10 @@ controlStyles:
     styles:
       - Opacity = 0
       - // Multi window indicator in overflow flyout
+  - target: Border#ElasticBorder
+    styles:
+      - Canvas.ZIndex = 20
+      - // Elastic Border mod for future use
 themeResourceVariables:
   - AdaptiveFill@Light =#FFFFFF
   - AdaptiveFill@Dark =#000000
