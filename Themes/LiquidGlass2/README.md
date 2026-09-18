@@ -218,7 +218,7 @@ controlStyles:
       - Width={{taskbarDock==`vertical`?skip():`Auto`}}
       - HorizontalAlignment=Center
       - MinWidth=100
-      - MaxWidth={{containerGridWidth>0?max(containerGridWidth-250,100):`Infinity`}}
+      - MaxWidth={{containerGridWidth>0?max(containerGridWidth-2*(trayWidth+50),100):`Infinity`}}
       - Grid.Column=1
   - target: Taskbar.TaskbarFrame > Grid#RootGrid
     styles:
@@ -260,6 +260,7 @@ controlStyles:
       - Margin=0,1,0,1
       - VerticalAlignment=Center
       - Height={{TaskHeight - 8}}
+      - ActualWidth=>trayWidth
   - target: SystemTray.SystemTrayFrame
     styles:
       - HorizontalAlignment=Left
